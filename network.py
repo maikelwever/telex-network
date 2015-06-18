@@ -14,8 +14,7 @@ class NetworkPlugin(plugin.TelexPlugin):
     PING_EXCLUSIONS = ['10.', '172.', '192.']
 
     HOSTNAME_REGEX = "(?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$"
-    IP4_REGEX = "(?P<ip>(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)" + \
-                "{3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$"
+    IP4_REGEX = "(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$"
 
     usage = [
         "!dns [domainname]: Query the A record for 'domainname'",
