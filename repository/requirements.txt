@@ -1,1 +1,1 @@
-dnspython==1.12.0
+-e git+https://github.com/rthalley/dnspython@python3#egg=dnspython
