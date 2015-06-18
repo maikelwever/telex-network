@@ -1,6 +1,6 @@
-from dns import resolver
 from telex import plugin
 
+import dns.resolver
 import socket
 
 
@@ -43,8 +43,8 @@ class NetworkPlugin(plugin.TelexPlugin):
     def dns_lookup(self, msg, domain, recordtype="A"):
         peer = self.bot.get_peer_to_send(msg)
         try:
-            result = "\n".join([str(i) for i in resolver.query(domain, recordtype)])
-        except resolver.NoAnswer:
+            result = "\n".join([str(i) for i in dns.resolver.query(domain, recordtype)])
+        except dns.resolver.NoAnswer:
             txt = "No answer was given."
             peer.send_msg(txt, reply=msg.id, preview=False)
 
