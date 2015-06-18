@@ -1,0 +1,9 @@
+{
+    "name": "Network",
+    "description": "Some useful network-related things like dns resolving, pinging.",
+    "version": "1.0",
+    "default_enable": ["Network"],
+    "homepage": "https://github.com/maikelwever/telex-network",
+    "repo": "https://github.com/maikelwever/telex-network.git",
+    "branch": "master"
+}

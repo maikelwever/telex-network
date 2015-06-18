@@ -1,0 +1,9 @@
+[Core]
+Name = Network
+Module = network
+
+[Documentation]
+Author = Maikel Wever
+Version = 1.0
+Website = https://github.com/maikelwever/telex-network
+Description = Some useful network-related things like dns resolving, pinging.
