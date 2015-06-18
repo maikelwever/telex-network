@@ -35,11 +35,6 @@ class NetworkPlugin(plugin.TelexPlugin):
         "ping_timeout": "Timeout in milliseconds for ping."
     }
 
-    def __init__(self, *args, **kwargs):
-        super(NetworkPlugin, self).__init__(*args, **kwargs)
-        if self.read_option('ping_timeout') and int(self.read_option('ping_timeout')):
-            self.PING_TIMEOUT = int(self.read_option('ping_timeout'))
-
     def dns_lookup(self, msg, domain, recordtype="A"):
         peer = self.bot.get_peer_to_send(msg)
         try:
