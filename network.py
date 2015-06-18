@@ -14,9 +14,9 @@ class NetworkPlugin(plugin.TelexPlugin):
     PING_EXCLUSIONS = ['10.', '172.', '192.']
 
     HOSTNAME_REGEX = "(?P<hostname>([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*" + \
-                     "[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
+                     "[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
     IP4_REGEX = "(?P<ip>(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)" + \
-                "{3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$"
+                "{3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))"
 
     usage = [
         "!dns [domainname]: Query the A record for 'domainname'",
@@ -27,7 +27,7 @@ class NetworkPlugin(plugin.TelexPlugin):
 
     patterns = {
         "^!dns " + HOSTNAME_REGEX: "dns_lookup_a",
-        "(?i)^!dns (?P<type>A|AAAA|CNAME|PTR|MX|NS|TXT|SRV|DKIM)" + HOSTNAME_REGEX: "dns_lookup_typed",
+        "(?i)^!dns (?P<type>A|AAAA|CNAME|PTR|MX|NS|TXT|SRV|DKIM) " + HOSTNAME_REGEX: "dns_lookup_typed",
         "^!dns " + IP4_REGEX: "dns_lookup_reverse",
     }
 
