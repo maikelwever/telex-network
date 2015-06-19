@@ -78,7 +78,7 @@ class NetworkPlugin(plugin.TelexPlugin):
 
     def do_ping(self, msg, matches):
         peer = self.bot.get_peer_to_send(msg)
-        host = matches.group(0)
+        host = matches.group(1)
 
         for i in self.PING_EXCLUSIONS:
             if host.startswith(i):
