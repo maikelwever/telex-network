@@ -90,6 +90,8 @@ class NetworkPlugin(plugin.TelexPlugin):
                 ["ping", "-c", "4", "-W", "1", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             out, error = ping.communicate()
+            if type(out) == bytes:
+                out = out.decode('utf-8')
             peer.send_msg(out, reply=msg.id, preview=False)
         except Exception as e:
             peer.send_msg("Error: {0}".format(str(e)), reply=msg.id, preview=False)
