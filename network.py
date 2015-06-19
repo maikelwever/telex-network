@@ -1,6 +1,7 @@
 from telex import plugin
 
 import dns.resolver
+import subprocess
 import socket
 import re
 
@@ -18,13 +19,14 @@ class NetworkPlugin(plugin.TelexPlugin):
     usage = [
         "!dns [recordtype] [domainname]: Query the 'recordtype' record for 'domainname'",
         "!dns [ipv4_address]: Query the reverse dns for 'ipv4_address'",
-        # "!ping [destination]: Does a ping to the destination.",
+        "!ping [destination]: Does a ping to the destination.",
     ]
 
     patterns = {
         "^{prefix}dns (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_a",
         "^{prefix}dns (?P<record>\w+) (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_typed",
         "^{prefix}dns (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$": "dns_lookup_reverse",
+        "^{prefix}ping (.+)$": "do_ping",
     }
 
     config_options = {
@@ -73,3 +75,18 @@ class NetworkPlugin(plugin.TelexPlugin):
             return
 
         peer.send_msg(result, reply=msg.id, preview=False)
+
+    def do_ping(self, msg, matches):
+        peer = self.bot.get_peer_to_send(msg)
+        host = matches.group(0)
+
+        for i in self.PING_EXCLUSIONS:
+            if host.startswith(i):
+                peer.send_msg("Destination host unreachable.", reply=msg.id, preview=False)
+                return
+
+        ping = subprocess.Popen(
+            ["ping", "-c", "4", "-W", "1", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        out, error = ping.communicate()
+        peer.send_msg(out, reply=msg.id, preview=False)
