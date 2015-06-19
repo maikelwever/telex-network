@@ -2,6 +2,7 @@ from telex import plugin
 
 import dns.resolver
 import socket
+import re
 
 
 class NetworkPlugin(plugin.TelexPlugin):
@@ -12,6 +13,7 @@ class NetworkPlugin(plugin.TelexPlugin):
 
     PING_TIMEOUT = 1000
     PING_EXCLUSIONS = ['10.', '172.', '192.']
+    IP_REGEX = re.compile("^(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$")
 
     usage = [
         "!dns [recordtype] [domainname]: Query the 'recordtype' record for 'domainname'",
@@ -20,9 +22,9 @@ class NetworkPlugin(plugin.TelexPlugin):
     ]
 
     patterns = {
-        "^!dns (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_a",
-        "^!dns (?P<record>\w+) (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_typed",
-        "^!dns (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$": "dns_lookup_reverse",
+        "^{prefix}dns (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_a",
+        "^{prefix}dns (?P<record>\w+) (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_typed",
+        "^{prefix}dns (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$": "dns_lookup_reverse",
     }
 
     config_options = {
@@ -39,6 +41,9 @@ class NetworkPlugin(plugin.TelexPlugin):
         self.dns_lookup(msg, domain, recordtype=recordtype)
 
     def dns_lookup(self, msg, domain, recordtype="A"):
+        if self.IP_REGEX.search(domain):
+            return
+
         peer = self.bot.get_peer_to_send(msg)
 
         try:
