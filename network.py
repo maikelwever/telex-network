@@ -30,7 +30,7 @@ class NetworkPlugin(plugin.TelexPlugin):
 
     def dns_lookup(self, msg, matches):
         domain = matches.groupdict()['hostname']
-        recordtype = matches.groupdict()['type']
+        recordtype = matches.groupdict()['record']
         peer = self.bot.get_peer_to_send(msg)
         peer.send_msg("Domain {0}, record {1}".format(domain, recordtype), reply=msg.id, preview=False)
 
@@ -55,11 +55,13 @@ class NetworkPlugin(plugin.TelexPlugin):
             if ip.startswith(exclusion):
                 txt = "Error, unknown host"
                 peer.send_msg(txt, reply=msg.id, preview=False)
+                return
 
         try:
             result = socket.gethostbyaddr(ip)[0]
-        except (socket.herror, socket.gaierror, IndexError):
+        except:
             txt = "Error, unknown host"
             peer.send_msg(txt, reply=msg.id, preview=False)
+            return
 
         peer.send_msg(result, reply=msg.id, preview=False)
