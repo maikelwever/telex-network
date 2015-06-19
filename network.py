@@ -13,28 +13,26 @@ class NetworkPlugin(plugin.TelexPlugin):
     PING_TIMEOUT = 1000
     PING_EXCLUSIONS = ['10.', '172.', '192.']
 
-    HOSTNAME_REGEX = "(?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})"
-    IP4_REGEX = "(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$"
-
     usage = [
-        "!dns [domainname]: Query the A record for 'domainname'",
         "!dns [recordtype] [domainname]: Query the 'recordtype' record for 'domainname'",
         "!dns [ipv4_address]: Query the reverse dns for 'ipv4_address'",
         # "!ping [destination]: Does a ping to the destination.",
     ]
 
     patterns = {
-        "^!dns " + HOSTNAME_REGEX: "dns_lookup_a",
-        "^!dns (?P<type>\w+) " + HOSTNAME_REGEX: "dns_lookup_typed",
-        "^!dns " + IP4_REGEX: "dns_lookup_reverse",
+        "^!dns (?P<record>\w+) (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup",
+        "^!dns (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$": "dns_lookup_reverse",
     }
 
     config_options = {
         "ping_timeout": "Timeout in milliseconds for ping."
     }
 
-    def dns_lookup(self, msg, domain, recordtype="A"):
+    def dns_lookup(self, msg, matches):
+        domain = matches.groupdict()['hostname']
+        recordtype = matches.groupdict()['type']
         peer = self.bot.get_peer_to_send(msg)
+
         try:
             result = "\n".join([str(i) for i in dns.resolver.query(domain, recordtype)])
         except dns.resolver.NoAnswer:
@@ -42,15 +40,6 @@ class NetworkPlugin(plugin.TelexPlugin):
             peer.send_msg(txt, reply=msg.id, preview=False)
 
         peer.send_msg(result, reply=msg.id, preview=False)
-
-    def dns_lookup_a(self, msg, matches):
-        domain = matches.groupdict()['hostname']
-        self.dns_lookup(msg, domain)
-
-    def dns_lookup_typed(self, msg, matches):
-        domain = matches.groupdict()['hostname']
-        recordtype = matches.groupdict()['type']
-        self.dns_lookup(msg, domain, recordtype=recordtype)
 
     def dns_lookup_reverse(self, msg, matches):
         ip = matches.groupdict()['ip']
