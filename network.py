@@ -26,7 +26,7 @@ class NetworkPlugin(plugin.TelexPlugin):
         "^{prefix}dns (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_a",
         "^{prefix}dns (?P<record>\w+) (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_typed",
         "^{prefix}dns (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$": "dns_lookup_reverse",
-        "^{prefix}ping (.+)$": "do_ping",
+        "^{prefix}ping ([a-zA-Z0-9-\._]+)$": "do_ping",
     }
 
     config_options = {
