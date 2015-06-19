@@ -20,7 +20,8 @@ class NetworkPlugin(plugin.TelexPlugin):
     ]
 
     patterns = {
-        "^!dns (?P<record>\w+) (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup",
+        "^!dns (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_a",
+        "^!dns (?P<record>\w+) (?P<host>([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15})$": "dns_lookup_typed",
         "^!dns (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$": "dns_lookup_reverse",
     }
 
@@ -28,19 +29,22 @@ class NetworkPlugin(plugin.TelexPlugin):
         "ping_timeout": "Timeout in milliseconds for ping."
     }
 
-    def dns_lookup(self, msg, matches):
+    def dns_lookup_a(self, msg, matches):
+        domain = matches.groupdict()['host']
+        self.dns_lookup(msg, domain)
+
+    def dns_lookup_typed(self, msg, matches):
         domain = matches.groupdict()['host']
         recordtype = matches.groupdict()['record']
+        self.dns_lookup(msg, domain, recordtype=recordtype)
+
+    def dns_lookup(self, msg, domain, recordtype="A"):
         peer = self.bot.get_peer_to_send(msg)
 
         try:
             result = "\n".join([str(i) for i in dns.resolver.query(domain, recordtype)])
-        except dns.resolver.NoAnswer:
-            txt = "No answer was given."
-            peer.send_msg(txt, reply=msg.id, preview=False)
-            return
         except Exception as e:
-            txt = "Exception {0}".format(str(e))
+            txt = "Error: {0}".format(str(e))
             peer.send_msg(txt, reply=msg.id, preview=False)
             return
 
