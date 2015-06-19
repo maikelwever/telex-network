@@ -29,12 +29,9 @@ class NetworkPlugin(plugin.TelexPlugin):
     }
 
     def dns_lookup(self, msg, matches):
-        peer = self.bot.get_peer_to_send(msg)
-        peer.send_msg("Test {0}".format(matches.groupdict()), reply=msg.id, preview=False)
-        domain = matches.groupdict()['hostname']
+        domain = matches.groupdict()['host']
         recordtype = matches.groupdict()['record']
         peer = self.bot.get_peer_to_send(msg)
-        peer.send_msg("Domain {0}, record {1}".format(domain, recordtype), reply=msg.id, preview=False)
 
         try:
             result = "\n".join([str(i) for i in dns.resolver.query(domain, recordtype)])
