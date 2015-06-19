@@ -85,8 +85,11 @@ class NetworkPlugin(plugin.TelexPlugin):
                 peer.send_msg("Destination host unreachable.", reply=msg.id, preview=False)
                 return
 
-        ping = subprocess.Popen(
-            ["ping", "-c", "4", "-W", "1", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        out, error = ping.communicate()
-        peer.send_msg(out, reply=msg.id, preview=False)
+        try:
+            ping = subprocess.Popen(
+                ["ping", "-c", "4", "-W", "1", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            out, error = ping.communicate()
+            peer.send_msg(out, reply=msg.id, preview=False)
+        except Exception as e:
+            peer.send_msg("Error: {0}".format(str(e)), reply=msg.id, preview=False)
