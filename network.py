@@ -80,11 +80,6 @@ class NetworkPlugin(plugin.TelexPlugin):
         peer = self.bot.get_peer_to_send(msg)
         host = matches.group(1)
 
-        if 'rm -rf' in hosts:
-            peer.send_msg("NOPE LOLKE FU.", reply=msg.id, preview=False)
-            return
-
-
         for i in self.PING_EXCLUSIONS:
             if host.startswith(i):
                 peer.send_msg("Destination host unreachable.", reply=msg.id, preview=False)
